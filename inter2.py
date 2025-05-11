@@ -19,7 +19,7 @@ import time
 
 import os
 
-from balls import fireballs, healthball
+from balls import fireballs, healthball, goblin
 
 from thegame import maingame
 
@@ -54,15 +54,21 @@ game = maingame()
 
 ball = fireballs()
 
+gob = goblin()
+
 hball = healthball()
 
 startball = time.time()
 
 healthtime = time.time()
 
+gobtime = time.time()
+
 hballist = [hball]
 
 ballist = [ball]
+
+gobllist = [gob]
 
 def gameover(win):
     font = pygame.font.SysFont(None, 100)
@@ -73,7 +79,7 @@ def gameover(win):
     my_sound.play()
     my_sound.set_volume(0.5)
 
-def maindraw(ballist, maingame, win, over, hballist):
+def maindraw(ballist, maingame, win, over, hballist, gobllist):
     maingame.draw(win)
     for balls in ballist:
         isdead = balls.falling()
@@ -92,6 +98,15 @@ def maindraw(ballist, maingame, win, over, hballist):
         else:
             hball.draw(win)
 
+    for gob in gobllist:
+
+        gob.running()        
+        gob.draw(win)
+        if(gob.isdead):
+            gobllist.remove(gob)
+        else:
+            gob.draw(win)
+
     pygame.display.update()
     return ballist
 
@@ -102,10 +117,10 @@ while run:
         if (event.type == pygame.QUIT):
             run = False
     
-    if(game.deaths == game.lives and (not over)):
+    if(game.deaths >= game.lives and (not over)):
         over = True
         overtime = time.time()
-        maindraw(ballist, game, win, over, hballist)
+        maindraw(ballist, game, win, over, hballist, gobllist)
         pygame.time.delay(2000)
         highscore(game.score)
         break
@@ -124,15 +139,21 @@ while run:
     if(time.time() - startball > 0.4):
         startball = time.time()
         ballist.append(fireballs())
-    ballist = maindraw(ballist, game, win, over, hballist)
-    game.death(ballist)
+    ballist = maindraw(ballist, game, win, over, hballist, gobllist)
+    game.death(ballist, gobllist)
 
 
-    if(time.time() - healthtime > 3):
+    if(time.time() - healthtime > 8):
         healthtime = time.time()
         hballist.append(healthball())
     game.addlife(hballist)
 
+    rtime = random.randint(4, 10)
+
+    if(time.time() - gobtime > rtime):
+        gobtime = time.time()
+        gobllist.append(goblin())
+    
 
 
 

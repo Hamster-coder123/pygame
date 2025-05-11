@@ -47,3 +47,37 @@ class healthball:
     
     def draw(self, win):
         pygame.draw.circle(win,self.hballcol, (self.hballX, self.hballY), 15)
+
+class goblin:
+    def __init__(self):
+        self.gobvel = 4
+        self.isdead = False
+        self.touch = False
+        
+        self.gobY = 410
+        self.pick = random.randint(1,2)
+        if(self.pick == 1):
+            self.gobX = 0
+            self.gob = pygame.image.load("gobrun.png")
+        else:
+            self.gobX = 788
+            self.gob = pygame.image.load("gobrun2.png")
+
+
+    def running(self):
+        if(self.pick == 1):
+            if(self.gobX < 900):
+                self.gobX = self.gobX + self.gobvel
+                self.isdead = False
+            else:
+                self.isdead = True
+        else:
+            if(self.gobX > 0):
+                self.gobX = self.gobX - self.gobvel
+                self.isdead = False
+            else:
+                self.isdead = True    
+
+        return self.isdead
+    def draw(self, win):
+        win.blit(self.gob,(self.gobX,self.gobY))

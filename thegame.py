@@ -15,7 +15,7 @@ class maingame:
         self.jumpspeed = 20
         self.jumpvel = self.jumpspeed
         self.isjump = False
-        self.X = 50
+        self.X = 400
         self.Y = 400
         self.vel = 5
         self.deaths = 0
@@ -76,8 +76,16 @@ class maingame:
         pygame.mixer.music.unpause()
 
 
+    def lifesound(self):
+        pygame.mixer.music.pause()
+        my_sound = pygame.mixer.Sound('life.mp3')
+        my_sound.play()
+        my_sound.set_volume(0.5)
+        pygame.mixer.music.unpause()
 
-    def death(self, ballist):
+
+
+    def death(self, ballist, gobllist):
         self.threshx = self.X + 64
         self.threshx2 = self.X
         self.threshy = self.Y + 64
@@ -94,6 +102,21 @@ class maingame:
                         print(self.deaths, "deaths")
                         self.deathsound()
                         balls.touch = True
+
+        for gob in gobllist:
+            gobX = gob.gobX
+            gobY = gob.gobY
+
+            if(not gob.touch):
+                if((gobX < self.threshx) and (gobX > self.threshx2)): 
+                    if((gobY < self.threshy) and (gobY > self.threshy2)):
+                        self.deaths = self.deaths + 4
+                        print(self.deaths, "deaths")
+                        self.deathsound()
+                        gob.touch = True
+
+
+
 
 
 
@@ -113,6 +136,6 @@ class maingame:
                     if((hball.hballY < self.threshy) and (hball.hballY > self.threshy2)):
                         self.lives += 1
                         print("+ 1 life")
-                        self.deathsound()
+                        self.lifesound()
                         hball.touch = True
 
